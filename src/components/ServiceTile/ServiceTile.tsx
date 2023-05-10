@@ -9,20 +9,10 @@ import {
 } from '@mui/material'
 import { useState } from 'react'
 import { t } from 'i18next'
+import type { ServiceType } from '../../types/service'
 
-type ServiceTileProps = {
-  id: number
-  nameService: string
-  prices: {
-    currency: string
-    year2023: number
-    year2024: number
-    year2025: number
-  }
-  promotionOptions: {
-    status: boolean
-    description: string
-  }
+type ServiceTileProps = ServiceType & {
+  addingServiceToCart: (newService: ServiceType, duration: string[]) => void
 }
 
 export const ServiceTile = ({
@@ -30,11 +20,12 @@ export const ServiceTile = ({
   nameService,
   prices,
   promotionOptions,
+  addingServiceToCart,
 }: ServiceTileProps) => {
   const years = Object.keys(prices)
     .filter((key) => key.startsWith('year'))
     .map((year) => year.slice(4))
-  console.log(years)
+
   const [serviceDuration, setServiceDuration] = useState<string[]>([])
 
   const handleFormat = (
@@ -79,7 +70,20 @@ export const ServiceTile = ({
           </ToggleButtonGroup>
         </Box>
 
-        <Button disabled={!serviceDuration.length}>{t('add')}</Button>
+        <Button
+          disabled={!serviceDuration.length}
+          onClick={() => {
+            const serviceSentToCart = {
+              id,
+              nameService,
+              prices,
+              promotionOptions,
+            }
+            addingServiceToCart(serviceSentToCart, serviceDuration)
+          }}
+        >
+          {t('add')}
+        </Button>
       </Stack>
     </Paper>
   )
