@@ -10,6 +10,9 @@ import {
 import { useState } from 'react'
 import { t } from 'i18next'
 import type { ServiceType } from '../../types/service'
+import { splitToYears } from '../../func/years'
+import { useSelector } from 'react-redux'
+import { cartSelector } from '../../store/cart-slice'
 
 type ServiceTileProps = ServiceType & {
   addingServiceToCart: (newService: ServiceType, duration: string[]) => void
@@ -22,13 +25,14 @@ export const ServiceTile = ({
   promotionOptions,
   addingServiceToCart,
 }: ServiceTileProps) => {
-  const years = Object.keys(prices)
-    .filter((key) => key.startsWith('year'))
-    .map((year) => year.slice(4))
-
+  const cart = useSelector(cartSelector.selectCartItems)
+  const allServicesInCart = cart.map((service) => service.id)
+  console.log(allServicesInCart)
+  const years = splitToYears(prices)
+  const existingService = cart.find((service) => service.id === id)
   const [serviceDuration, setServiceDuration] = useState<string[]>([])
 
-  const handleFormat = (
+  const handleChangeServiceDuration = (
     event: React.MouseEvent<HTMLElement>,
     newServiceDuration: string[]
   ) => {
@@ -36,7 +40,12 @@ export const ServiceTile = ({
   }
 
   return (
-    <Paper sx={{ padding: 2 }}>
+    <Paper
+      sx={{
+        padding: 2,
+        opacity: !!existingService ? 0.3 : 1,
+      }}
+    >
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
         justifyContent={{ xs: 'center', sm: 'space-between' }}
@@ -53,10 +62,11 @@ export const ServiceTile = ({
         <Box sx={{ width: '250px', textAlign: { xs: 'center', sm: 'left' } }}>
           <Typography variant="subtitle2">{t('serviceDuration')}</Typography>
           <ToggleButtonGroup
-            value={serviceDuration}
-            onChange={handleFormat}
+            value={!existingService && serviceDuration}
+            onChange={handleChangeServiceDuration}
             aria-label="Years for choice"
             size="small"
+            disabled={!!existingService}
           >
             {years.map((year) => (
               <ToggleButton
@@ -69,9 +79,8 @@ export const ServiceTile = ({
             ))}
           </ToggleButtonGroup>
         </Box>
-
         <Button
-          disabled={!serviceDuration.length}
+          disabled={!serviceDuration.length || !!existingService}
           onClick={() => {
             const serviceSentToCart = {
               id,

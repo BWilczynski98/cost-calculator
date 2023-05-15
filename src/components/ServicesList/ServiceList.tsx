@@ -12,33 +12,40 @@ export const ServiceList = () => {
 
   const addingServiceToCart = (newService: ServiceType, duration: string[]) => {
     const existingService = cart.find((service) => service.id === newService.id)
+    const sortDurationArray = duration.sort((a, b) =>
+      a.localeCompare(b, undefined, { numeric: true })
+    )
 
     if (existingService) {
       return
     }
 
-    dispatch(cartActions.addToCart({ duration, ...newService }))
+    dispatch(
+      cartActions.addToCart({ duration: sortDurationArray, ...newService })
+    )
   }
 
   return (
     <Container>
       <Paper sx={{ padding: 2 }} elevation={5}>
-        <Typography variant="h4">{t('serviceChoice')}</Typography>
         <Stack spacing={2}>
-          {services.length ? (
-            services.map((service) => (
-              <ServiceTile
-                key={service.id}
-                id={service.id}
-                nameService={service.name}
-                prices={service.priceList}
-                promotionOptions={service.promotion}
-                addingServiceToCart={addingServiceToCart}
-              />
-            ))
-          ) : (
-            <p>{t('somethingWentWrong')}</p>
-          )}
+          <Typography variant="h4">{t('serviceChoice')}</Typography>
+          <Stack spacing={2}>
+            {services.length ? (
+              services.map((service) => (
+                <ServiceTile
+                  key={service.id + Math.random()}
+                  id={service.id}
+                  nameService={service.name}
+                  prices={service.priceList}
+                  promotionOptions={service.promotion}
+                  addingServiceToCart={addingServiceToCart}
+                />
+              ))
+            ) : (
+              <p>{t('somethingWentWrong')}</p>
+            )}
+          </Stack>
         </Stack>
       </Paper>
     </Container>

@@ -5,6 +5,8 @@ import { RootState } from './store'
 
 type CartItem = ServiceType & { duration: string[] }
 
+type ServiceIdType = { serviceId: number }
+
 export type CartStateProps = {
   cart: CartItem[]
 }
@@ -17,8 +19,16 @@ export const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    addToCart: (state, action) => {
-      state.cart.push(action.payload)
+    addToCart: (state, { payload }: PayloadAction<CartItem>) => {
+      state.cart.push(payload)
+    },
+    deleteServiceFromCart: (
+      state,
+      { payload }: PayloadAction<ServiceIdType>
+    ) => {
+      state.cart = state.cart.filter(
+        (service) => service.id !== payload.serviceId
+      )
     },
   },
 })
