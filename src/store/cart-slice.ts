@@ -3,7 +3,7 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 import { ServiceType } from '../types/service'
 import { RootState } from './store'
 
-type CartItem = ServiceType & { duration: string[] }
+export type CartItem = ServiceType & { duration: string[] }
 
 type ServiceIdType = { serviceId: number }
 
@@ -22,13 +22,8 @@ export const cartSlice = createSlice({
     addToCart: (state, { payload }: PayloadAction<CartItem>) => {
       state.cart.push(payload)
     },
-    deleteServiceFromCart: (
-      state,
-      { payload }: PayloadAction<ServiceIdType>
-    ) => {
-      state.cart = state.cart.filter(
-        (service) => service.id !== payload.serviceId
-      )
+    deleteServiceFromCart: (state, { payload }: PayloadAction<ServiceIdType>) => {
+      state.cart = state.cart.filter((service) => service.id !== payload.serviceId)
     },
   },
 })

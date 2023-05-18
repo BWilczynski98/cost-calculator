@@ -1,12 +1,4 @@
-import {
-  Paper,
-  Stack,
-  Typography,
-  ToggleButtonGroup,
-  ToggleButton,
-  Button,
-  Box,
-} from '@mui/material'
+import { Paper, Stack, Typography, ToggleButtonGroup, ToggleButton, Button, Box } from '@mui/material'
 import { useState } from 'react'
 import { t } from 'i18next'
 import type { ServiceType } from '../../types/service'
@@ -18,24 +10,14 @@ type ServiceTileProps = ServiceType & {
   addingServiceToCart: (newService: ServiceType, duration: string[]) => void
 }
 
-export const ServiceTile = ({
-  id,
-  nameService,
-  prices,
-  promotionOptions,
-  addingServiceToCart,
-}: ServiceTileProps) => {
+export const ServiceTile = ({ id, nameService, prices, promotionOptions, addingServiceToCart }: ServiceTileProps) => {
   const cart = useSelector(cartSelector.selectCartItems)
-  const allServicesInCart = cart.map((service) => service.id)
-  console.log(allServicesInCart)
+
   const years = splitToYears(prices)
   const existingService = cart.find((service) => service.id === id)
   const [serviceDuration, setServiceDuration] = useState<string[]>([])
 
-  const handleChangeServiceDuration = (
-    event: React.MouseEvent<HTMLElement>,
-    newServiceDuration: string[]
-  ) => {
+  const handleChangeServiceDuration = (event: React.MouseEvent<HTMLElement>, newServiceDuration: string[]) => {
     setServiceDuration(newServiceDuration)
   }
 
@@ -53,11 +35,6 @@ export const ServiceTile = ({
       >
         <Box sx={{ width: '250px', textAlign: { xs: 'center', sm: 'left' } }}>
           <Typography variant="h6">{nameService}</Typography>
-          {promotionOptions.status && (
-            <Typography variant="caption">
-              {promotionOptions.description}
-            </Typography>
-          )}
         </Box>
         <Box sx={{ width: '250px', textAlign: { xs: 'center', sm: 'left' } }}>
           <Typography variant="subtitle2">{t('serviceDuration')}</Typography>
