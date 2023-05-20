@@ -1,9 +1,7 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import { ServiceType } from '../types/service'
+import { CartItem } from '../types/service'
 import { RootState } from './store'
-
-export type CartItem = ServiceType & { duration: string[] }
 
 type ServiceIdType = { serviceId: number }
 

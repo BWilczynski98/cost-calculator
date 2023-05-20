@@ -6,10 +6,6 @@
       "year2023": 39,
       "year2024": 49,
       "year2025": 59
-    },
-    "promotion": {
-      "status": true,
-      "description": "Usługa może być połączona w pakiet razem z Telewizją lub Abonamentem Telefonicznym"
     }
   },
   {
@@ -19,10 +15,6 @@
       "year2023": 49,
       "year2024": 49,
       "year2025": 59
-    },
-    "promotion": {
-      "status": true,
-      "description": "Usługa może być połączona w pakiet razem z Internetem"
     }
   },
   {
@@ -32,10 +24,6 @@
       "year2023": 29,
       "year2024": 29,
       "year2025": 29
-    },
-    "promotion": {
-      "status": true,
-      "description": "Usługa może być połączona w pakiet razem z Internetem"
     }
   },
   {
@@ -45,10 +33,6 @@
       "year2023": 29,
       "year2024": 29,
       "year2025": 29
-    },
-    "promotion": {
-      "status": true,
-      "description": "W pakiecie Internet + Telewizja dostępny za darmo"
     }
   },
   {
@@ -58,10 +42,6 @@
       "year2023": 79,
       "year2024": 89,
       "year2025": 99
-    },
-    "promotion": {
-      "status": false,
-      "description": "Tej usługi nie obejmuje promocja"
     }
   },
   {
@@ -71,10 +51,6 @@
       "year2023": 64,
       "year2024": 64,
       "year2025": 64
-    },
-    "promotion": {
-      "status": false,
-      "description": "Tej usługi nie obejmuje promocja"
     }
   }
 ]

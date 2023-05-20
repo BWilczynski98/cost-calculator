@@ -1,25 +1,39 @@
-import { Paper, Stack, Typography, ToggleButtonGroup, ToggleButton, Button, Box } from '@mui/material'
-import { useState } from 'react'
+import { Box, Button, Paper, Stack, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
 import { t } from 'i18next'
-import type { ServiceType } from '../../types/service'
-import { splitToYears } from '../../func/years'
+import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { serviceIsInTheCart } from '../../func/serviceIsInTheCart'
+import { splitToYears } from '../../func/years'
 import { cartSelector } from '../../store/cart-slice'
+import type { CartItem, ServiceType } from '../../types/service'
 
 type ServiceTileProps = ServiceType & {
-  addingServiceToCart: (newService: ServiceType, duration: string[]) => void
+  addingServiceToCart: (serviceAddedToCart: CartItem) => void
 }
 
-export const ServiceTile = ({ id, nameService, prices, promotionOptions, addingServiceToCart }: ServiceTileProps) => {
+export const ServiceTile = ({ id, nameService, prices, addingServiceToCart }: ServiceTileProps) => {
   const cart = useSelector(cartSelector.selectCartItems)
-
   const years = splitToYears(prices)
-  const existingService = cart.find((service) => service.id === id)
-  const [serviceDuration, setServiceDuration] = useState<string[]>([])
+  const existingService = serviceIsInTheCart(cart, id)
+  const [duration, setDuration] = useState<string[]>([])
+  const [price, setPrice] = useState<number>(0)
 
   const handleChangeServiceDuration = (event: React.MouseEvent<HTMLElement>, newServiceDuration: string[]) => {
-    setServiceDuration(newServiceDuration)
+    setDuration(newServiceDuration)
   }
+
+  const calculatePrice = () => {
+    const total = duration.reduce((acc, year) => {
+      const summary = acc + prices[`year${year}`]
+      return summary
+    }, 0)
+
+    setPrice(total)
+  }
+
+  useEffect(() => {
+    calculatePrice()
+  }, [duration])
 
   return (
     <Paper
@@ -39,11 +53,11 @@ export const ServiceTile = ({ id, nameService, prices, promotionOptions, addingS
         <Box sx={{ width: '250px', textAlign: { xs: 'center', sm: 'left' } }}>
           <Typography variant="subtitle2">{t('serviceDuration')}</Typography>
           <ToggleButtonGroup
-            value={!existingService && serviceDuration}
+            value={!existingService && duration}
             onChange={handleChangeServiceDuration}
             aria-label="Years for choice"
             size="small"
-            disabled={!!existingService}
+            disabled={existingService}
           >
             {years.map((year) => (
               <ToggleButton
@@ -57,15 +71,15 @@ export const ServiceTile = ({ id, nameService, prices, promotionOptions, addingS
           </ToggleButtonGroup>
         </Box>
         <Button
-          disabled={!serviceDuration.length || !!existingService}
+          disabled={!duration.length || existingService}
           onClick={() => {
             const serviceSentToCart = {
               id,
               nameService,
-              prices,
-              promotionOptions,
+              price,
+              duration,
             }
-            addingServiceToCart(serviceSentToCart, serviceDuration)
+            addingServiceToCart(serviceSentToCart)
           }}
         >
           {t('add')}

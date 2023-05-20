@@ -1,159 +1,59 @@
-import { Container, Paper, Typography, Stack } from '@mui/material'
-import services from '../../api/services.json'
-import { ServiceTile } from '../ServiceTile'
+import { Container, Paper, Stack, Typography } from '@mui/material'
 import { t } from 'i18next'
-import { PriceType, ServiceType } from '../../types/service'
 import { useDispatch, useSelector } from 'react-redux'
-import { cartActions, cartSelector } from '../../store/cart-slice'
-import { ServicesKeys } from '../../types/servicesKeys'
-// import { useDisclose } from '../../hooks/useDisclose'
-// import { ConfirmationModal } from '../ConfirmationModal'
-import { useState } from 'react'
-import { ModalMessageOptionsType } from '../../types/confirmationModal'
+import services from '../../api/services.json'
+import { contractDurationsAreTheSame } from '../../func/contractDurationsAreTheSame'
 import { serviceIsInTheCart } from '../../func/serviceIsInTheCart'
+import { cartActions, cartSelector } from '../../store/cart-slice'
+import { CartItem } from '../../types/service'
+import { ServicesKeys } from '../../types/servicesKeys'
+import { ServiceTile } from '../ServiceTile'
 
 export const ServiceList = () => {
-  // const { isOpen: modalIsOpen, onOpen: openModal, onClose: closeModal } = useDisclose()
   const dispatch = useDispatch()
   const cart = useSelector(cartSelector.selectCartItems)
 
-  const [modalMessageOptions, setModalMessageOptions] = useState<ModalMessageOptionsType>({
-    orderingServiceKey: null,
-    inCartServiceKey: null,
-    packageServiceKey: null,
-  })
-
-  const addingServiceToCart = (serviceAddedToCart: ServiceType, duration: string[]) => {
-    const existingService = cart.find((service) => service.id === serviceAddedToCart.id)
-    const durationOfTheAddedService = duration.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
-    const testArray = [ServicesKeys.TELEVISION, ServicesKeys.PACKAGE_INTERNET_TELEVISION]
-    // const test = testArray.some()
-    // czy moj koszyk bedzie mial telewizje
-    console.log(cart.some((item) => testArray.includes(item.id)))
-
-    if (existingService) {
+  const addingServiceToCart = (serviceAddedToCart: CartItem) => {
+    if (serviceIsInTheCart(cart, serviceAddedToCart.id)) {
+      alert(t('serviceInTheCartAlert'))
       return
     }
 
     // Decoder Requirements
     if (serviceAddedToCart.id === ServicesKeys.DECODER_4K) {
-      const decoderRequirements = [ServicesKeys.TELEVISION, ServicesKeys.PACKAGE_INTERNET_TELEVISION]
+      const decoderContractDuration = serviceAddedToCart.duration
+      const televisionContractDuration = cart.find((service) => service.id === ServicesKeys.TELEVISION)?.duration
+      const packageInternetAndTelevisionContractDuration = cart.find(
+        (service) => service.id === ServicesKeys.PACKAGE_INTERNET_TELEVISION
+      )?.duration
+      const errorAlert = (alertDescription: string): void => alert(t(`${alertDescription}`))
 
-      const checkCartHasTelevision = decoderRequirements.some(() =>
-        cart.map((item) => item.id).includes(ServicesKeys.TELEVISION)
-      )
-      const checkCartHasInternetAndTelevisionPackage = decoderRequirements.some(() =>
-        cart.map((item) => item.id).includes(ServicesKeys.PACKAGE_INTERNET_TELEVISION)
-      )
-
-      if (checkCartHasTelevision || checkCartHasInternetAndTelevisionPackage) {
-        dispatch(cartActions.addToCart({ duration: durationOfTheAddedService, ...serviceAddedToCart }))
+      if (
+        !serviceIsInTheCart(cart, ServicesKeys.TELEVISION) &&
+        !serviceIsInTheCart(cart, ServicesKeys.PACKAGE_INTERNET_TELEVISION)
+      ) {
+        errorAlert('decoderRequirementsAlert')
         return
-      } else {
-        alert(t('decoderRequirementsAlert'))
+      }
+
+      if (
+        serviceIsInTheCart(cart, ServicesKeys.TELEVISION) &&
+        !contractDurationsAreTheSame(decoderContractDuration, televisionContractDuration)
+      ) {
+        errorAlert('decoderRequirementsAlert')
+        return
+      }
+
+      if (
+        serviceIsInTheCart(cart, ServicesKeys.PACKAGE_INTERNET_TELEVISION) &&
+        !contractDurationsAreTheSame(decoderContractDuration, packageInternetAndTelevisionContractDuration)
+      ) {
+        errorAlert('decoderRequirementsAlert')
         return
       }
     }
 
-    // Proposal of packages for the Internet
-    // if (
-    //   serviceAddedToCart.id === ServicesKeys.INTERNET ||
-    //   serviceAddedToCart.id === ServicesKeys.TELEVISION ||
-    //   serviceAddedToCart.id === ServicesKeys.PHONE_SUBSCRIPTION
-    // ) {
-    //   const packageRequirements = [ServicesKeys.INTERNET, ServicesKeys.TELEVISION, ServicesKeys.PHONE_SUBSCRIPTION]
-
-    //   const checkCartHasTelevision = packageRequirements.some(() =>
-    //     cart.map((item) => item.id).includes(ServicesKeys.TELEVISION)
-    //   )
-    //   const checkCartHasPhoneSubscription = packageRequirements.some(() =>
-    //     cart.map((item) => item.id).includes(ServicesKeys.PHONE_SUBSCRIPTION)
-    //   )
-    //   const checkCartHasInternet = packageRequirements.some(() =>
-    //     cart.map((item) => item.id).includes(ServicesKeys.INTERNET)
-    //   )
-
-    //   if (!checkCartHasTelevision && checkCartHasPhoneSubscription) {
-    //     const durationOfTheContractForPhoneSubscriptionService = cart
-    //       .filter((item) => item.id === ServicesKeys.PHONE_SUBSCRIPTION)
-    //       .flatMap(({ duration }) => duration)
-
-    //     const durationOfTheInternetService = durationOfTheAddedService
-
-    //     const durationOfTheContractsSame =
-    //       durationOfTheContractForPhoneSubscriptionService.length === durationOfTheInternetService.length &&
-    //       durationOfTheContractForPhoneSubscriptionService.every(
-    //         (value, index) => value === durationOfTheInternetService[index]
-    //       )
-
-    //     if (durationOfTheContractsSame) {
-    //       setModalMessageOptions({
-    //         orderingServiceKey: 'Abonament telefoniczny',
-    //         inCartServiceKey: 'Internet',
-    //         packageServiceKey: 'Internet + Abonament telefoniczny',
-    //       })
-    //       openModal()
-    //     }
-    //   }
-
-    //   if (checkCartHasTelevision && !checkCartHasPhoneSubscription) {
-    //     const durationOfTheContractForTelevisionService = cart
-    //       .filter((item) => item.id === ServicesKeys.TELEVISION)
-    //       .flatMap(({ duration }) => duration)
-
-    //     const durationOfTheInternetService = durationOfTheAddedService
-
-    //     const durationOfTheContractsSame =
-    //       durationOfTheContractForTelevisionService.length === durationOfTheInternetService.length &&
-    //       durationOfTheContractForTelevisionService.every(
-    //         (value, index) => value === durationOfTheInternetService[index]
-    //       )
-
-    //     if (durationOfTheContractsSame) {
-    //       setModalMessageOptions({
-    //         orderingServiceKey: 'Telewizji',
-    //         inCartServiceKey: 'Internet',
-    //         packageServiceKey: 'Internet + Telewizja',
-    //       })
-    //       openModal()
-
-    //       const televisionPrices = cart.find((item) => item.id === ServicesKeys.TELEVISION)?.prices
-    //       const internetPrices = cart.find((item) => item.id === ServicesKeys.INTERNET)?.prices
-    //       const packageInternetAndTelevisionPrices: PriceType | undefined = services.find(
-    //         (item) => item.id === ServicesKeys.PACKAGE_INTERNET_TELEVISION
-    //       )?.prices
-    //       let totalTelevisionCost = 0
-    //       let totalInternetPrices = 0
-    //       let totalPackageInternetAndTelevisionPrices = 0
-
-    //       if (televisionPrices) {
-    //         totalTelevisionCost = durationOfTheContractForTelevisionService.reduce((acc, currentValue) => {
-    //           const year = `year${parseInt(currentValue, 10)}`
-    //           const summary = acc + +televisionPrices[year]
-    //           return summary
-    //         }, 0)
-    //       }
-
-    //       if (internetPrices) {
-    //         totalInternetPrices = durationOfTheInternetService.reduce((acc, currentValue) => {
-    //           const year = `year${parseInt(currentValue, 10)}`
-    //           const summary = acc + +internetPrices[year]
-    //           return summary
-    //         }, 0)
-    //       }
-
-    //       if (packageInternetAndTelevisionPrices) {
-    //         totalPackageInternetAndTelevisionPrices = durationOfTheInternetService.reduce((acc, currentValue) => {
-    //           const year = `year${parseInt(currentValue, 10)}`
-    //           const summary = acc + +packageInternetAndTelevisionPrices[year]
-    //           return summary
-    //         }, 0)
-    //       }
-    //     }
-    //   }
-    // }
-
-    dispatch(cartActions.addToCart({ duration: durationOfTheAddedService, ...serviceAddedToCart }))
+    dispatch(cartActions.addToCart({ ...serviceAddedToCart }))
   }
 
   return (
@@ -172,7 +72,6 @@ export const ServiceList = () => {
                   id={service.id}
                   nameService={service.name}
                   prices={service.prices}
-                  promotionOptions={service.promotion}
                   addingServiceToCart={addingServiceToCart}
                 />
               ))

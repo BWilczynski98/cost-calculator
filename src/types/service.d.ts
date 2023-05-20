@@ -6,8 +6,9 @@ export type ServiceType = {
   id: number
   nameService: string
   prices: PriceType
-  promotionOptions: {
-    status: boolean
-    description: string
-  }
+}
+
+export type CartItem = Omit<ServiceType, 'prices'> & {
+  price: number
+  duration: string[]
 }

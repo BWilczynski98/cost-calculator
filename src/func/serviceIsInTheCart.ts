@@ -1,12 +1,7 @@
-import type { CartStateProps } from '../store/cart-slice'
-import type { ServicesKeys } from '../types/servicesKeys'
+import { CartItem } from '../types/service'
+import { ServicesKeys } from '../types/servicesKeys'
 
-export const serviceIsInTheCart = (
-  cart: CartStateProps[],
-  requirementsArray: string[],
-  expectedServiceKey: ServicesKeys
-) => {
-  const result = cart.some((item) => )
-
-  return result
+export const serviceIsInTheCart = (cart: CartItem[], serviceKey: ServicesKeys): boolean => {
+  const isAdded = cart.some((item) => item.id === serviceKey)
+  return isAdded
 }
