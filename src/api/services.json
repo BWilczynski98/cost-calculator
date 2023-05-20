@@ -2,85 +2,55 @@
   {
     "id": 1,
     "name": "Internet",
-    "priceList": {
-      "currency": "zloty",
+    "prices": {
       "year2023": 39,
       "year2024": 49,
       "year2025": 59
-    },
-    "promotion": {
-      "status": false,
-      "description": "Tej usługi nie obejmuje promocja"
     }
   },
   {
     "id": 2,
     "name": "Telewizja",
-    "priceList": {
-      "currency": "zloty",
+    "prices": {
       "year2023": 49,
       "year2024": 49,
       "year2025": 59
-    },
-    "promotion": {
-      "status": false,
-      "description": "Tej usługi nie obejmuje promocja"
     }
   },
   {
     "id": 3,
     "name": "Abonament telefoniczny",
-    "priceList": {
-      "currency": "zloty",
+    "prices": {
       "year2023": 29,
       "year2024": 29,
       "year2025": 29
-    },
-    "promotion": {
-      "status": false,
-      "description": "Tej usługi nie obejmuje promocja"
     }
   },
   {
     "id": 4,
     "name": "Dekoder 4K",
-    "priceList": {
-      "currency": "zloty",
+    "prices": {
       "year2023": 29,
       "year2024": 29,
       "year2025": 29
-    },
-    "promotion": {
-      "status": true,
-      "description": "W pakiecie Internet + Telewizja dostępny za darmo"
     }
   },
   {
     "id": 5,
     "name": "Pakiet Internet + Telewizja",
-    "priceList": {
-      "currency": "zloty",
+    "prices": {
       "year2023": 79,
       "year2024": 89,
       "year2025": 99
-    },
-    "promotion": {
-      "status": false,
-      "description": "Tej usługi nie obejmuje promocja"
     }
   },
   {
     "id": 6,
     "name": "Pakiet Internet + Abonament telefoniczny",
-    "priceList": {
-      "currency": "zloty",
+    "prices": {
       "year2023": 64,
       "year2024": 64,
       "year2025": 64
-    },
-    "promotion": {
-      "status": false,
-      "description": "Tej usługi nie obejmuje promocja"
     }
   }
 ]

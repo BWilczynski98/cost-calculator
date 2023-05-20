@@ -1,1 +1,1 @@
-export { CartTile } from "./CartTile";
+export { CartTile } from './CartTile'
